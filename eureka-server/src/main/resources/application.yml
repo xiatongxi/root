@@ -1,0 +1,53 @@
+spring:
+  profiles:
+    active: local_dev
+server:
+  port: 9001
+---
+# 本地开发环境
+spring:
+  profiles: local_dev
+#eurekaServer
+eureka:
+  instance:
+    prefer-ip-address: true
+    # 仅测试使用,部署上线不使用
+    status-page-url-path: /swagger-ui.html
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${spring.cloud.client.ip-address}:${server.port}/eureka/
+  server:
+    # 关闭自我保护机制(不关闭会在所有服务连接异常85%后不在注销服务)
+    enable-self-preservation: false
+    # 每隔30s扫描服务列表，移除失效服务(默认60000)
+    eviction-interval-timer-in-ms: 30000
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+#  endpoint:
+#    health:
+#      show-details: always
+---
+# 部署环境
+spring:
+  profiles: prod
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${spring.cloud.client.ip-address}:${server.port}/eureka/
+  server:
+    enable-self-preservation: false
+    eviction-interval-timer-in-ms: 30000
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
